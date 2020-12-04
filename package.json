@@ -1,0 +1,15 @@
+{
+  "name": "scrap-cesi-tp",
+  "version": "1.0",
+  "description": "Scrapper Planning Cesi ENT",
+  "main": "src/main.js",
+  "repository": "https://github.com/cycy24/scrap-cesi-tp/tree/main",
+  "author": "DevOps Groupe1 RIL19",
+  "license": "undefine",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.21.0",
+    "express": "^4.17.1",
+    "puppeteer": "^5.5.0"
+  }
+}
