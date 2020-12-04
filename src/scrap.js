@@ -9,8 +9,9 @@ module.exports.scrap = async function scrap() {
     await client.send('Network.clearBrowserCache');
 
     await page.goto('https://ent.cesi.fr/');
-    await page.type('input[id="login]', 'theo.samson@viacesi.fr')
+    await page.type('input[id=login]', 'theo.samson@viacesi.fr')
     await page.click('a[id=submit]');
+    await timeout(3000)
     await page.type('input[id=passwordInput]', 'Favud299');
     await page.click('span[id=submitButton]');
     await timeout(5000)
@@ -18,9 +19,10 @@ module.exports.scrap = async function scrap() {
     const result = await page.cookies();
     await page.close();
     await browser.close();
+
     return {
-        JSESSIONID: result.JSESSIONID,
-        SERVERID: result.SERVERID
+        JSESSIONID: result.find(x => x.name === "JSESSIONID").value,
+        SERVERID: result.find(x => x.name === "SERVERID").value,
     };
 }
 
