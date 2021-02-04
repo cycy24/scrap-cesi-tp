@@ -1,44 +1,53 @@
 const scraping = require("./scrap");
 const express = require('express')
+const CronJob = require('cron').CronJob;
+const cache = require('./cache')
 const {getPlanning} = require("./api_cesi");
 const app = express()
 const port = 3000
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
-const daysNumber = [{day:"Lundi",number : 1},{day:"Mardi",number : 2},{day:"Mercredi",number : 3},{day:"Jeudi",number : 4},{day:"Vendredi",number : 5},{day:"Samedi",number : 6},{day:"Dimanche",number : 0}];
+const getCookies = function (){
+    scraping.scrap().then(data => {
+        console.log("les cookies !!!")
+        cache.cookies = data
+    })
+}
+
+getCookies()
+const job =  new CronJob('0 * * * * *', getCookies, null, true, 'Europe/Paris', true);
+job.start()
+
+app.get('/', async (req, res) => {
+    if (cache.cookies === undefined) {
+        res.status(400).send({
+            message: 'Waiting for scraping'
+        });
+        return
+    }
+    let tableauLong = [...Array(8).keys()];
+
+    const reducer = (accumulator, currentValue) => {
+
+        let newMonday = new Date();
+        let newSunday = new Date();
+
+        newMonday.setDate(getMondayDate().getDate() + (currentValue * 7));
+        newSunday.setDate(getSundayFrMonday().getDate() + (currentValue * 7));
+
+        accumulator.push({monday: newMonday, sunday: newSunday});
+        return accumulator;
+    };
+
+    const listSemaine = tableauLong.reduce(reducer, []);
 
 
-app.get('/', (req, res) => {
-    scraping.scrap().then(async r => {
+    const listPlanning = await Promise.all(listSemaine.map(async semaine => {
+        return await getPlanning(cache.cookies.JSESSIONID, cache.cookies.SERVERID, formatDateFR(semaine.monday), formatDateFR(semaine.sunday));
+    }));
 
-        let tableauLong = [...Array(8).keys()];
+    res.send(listPlanning);
 
-        const reducer = (accumulator, currentValue) => {
-  
-            let newMonday = new Date();
-            let newSunday = new Date();
-
-            newMonday.setDate(getMondayDate().getDate()+(currentValue*7));
-            newSunday.setDate(getSundayFrMonday().getDate()+(currentValue*7));
-
-            accumulator.push({monday: newMonday, sunday: newSunday});
-            
-            return accumulator;
-        };
-
-       const listSemaine = tableauLong.reduce(reducer,[]);
-
-
-
-       const listPlanning =  await Promise.all(listSemaine.map(async semaine => {
-        return await getPlanning(r.JSESSIONID, r.SERVERID, formatDateFR(semaine.monday), formatDateFR(semaine.sunday));
-       }));
-        
-       console.log("Liste de planning",listPlanning);
-        
-
-        res.send(listPlanning);
-    }).catch(x => console.log(x));
 
 })
 
@@ -48,16 +57,14 @@ app.listen(port, () => {
 })
 
 function formatDateFR(dateIn) {
-    return new Date(dateIn).
-    toLocaleString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}).
-    replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2');
+    return new Date(dateIn).toLocaleString('en-us', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2');
 }
 
-function twoDigitNumber(number){
-    
-}
-
-function getMondayDate(){
+function getMondayDate() {
     let today = new Date();
     let monday = new Date();
     let diffTodayMonday;
@@ -65,16 +72,12 @@ function getMondayDate(){
 
     diffTodayMonday = numJour === 0 ? 6 : numJour - 1;
 
-    monday.setDate(today.getDate()-diffTodayMonday);
+    monday.setDate(today.getDate() - diffTodayMonday);
 
     return monday;
 }
 
-function getSundayFrMonday(){
-   /* let sunday = new Date();
-    sunday.setDate(mondayDate.getDate()+6)
-    return sunday;*/
-
+function getSundayFrMonday() {
     let today = new Date();
     let sunday = new Date();
     let diffTodaySunday;
@@ -82,7 +85,7 @@ function getSundayFrMonday(){
 
     diffTodaySunday = numJour === 0 ? 0 : 7 - numJour;
 
-    sunday.setDate(today.getDate()+diffTodaySunday);
+    sunday.setDate(today.getDate() + diffTodaySunday);
 
     return sunday;
 }
