@@ -1,5 +1,7 @@
 FROM zenika/alpine-chrome
 
+USER root
+
 RUN apk add --update nodejs npm && npm install --global yarn
 
 COPY . . 
