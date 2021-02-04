@@ -26,27 +26,36 @@ app.get('/', (req, res) => {
             return accumulator;
         };
 
-        console.log(tableauLong.reduce(reducer,[]));
+       const listSemaine = tableauLong.reduce(reducer,[]);
 
 
-        let mondayDate = getMondayDate();
-        console.log("scrap succes date", mondayDate, getSundayFrMonday() );
-        /*console.log([...Array(5).keys()].map(x =>{
-            x = x*1;
-            return x;
-        })
-        );*/
-        const truc = await getPlanning(r.JSESSIONID, r.SERVERID, "2020-11-30", "2021-02-06");
-        console.log("scrap succes", truc);
 
-        res.send(truc);
+       const listPlanning =  await Promise.all(listSemaine.map(async semaine => {
+        return await getPlanning(r.JSESSIONID, r.SERVERID, formatDateFR(semaine.monday), formatDateFR(semaine.sunday));
+       }));
+        
+       console.log("Liste de planning",listPlanning);
+        
+
+        res.send(listPlanning);
     }).catch(x => console.log(x));
 
 })
 
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
+
+function formatDateFR(dateIn) {
+    return new Date(dateIn).
+    toLocaleString('en-us', {year: 'numeric', month: '2-digit', day: '2-digit'}).
+    replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2');
+}
+
+function twoDigitNumber(number){
+    
+}
 
 function getMondayDate(){
     let today = new Date();
