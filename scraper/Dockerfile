@@ -1,4 +1,4 @@
-FROM zenika/alpine-chrome
+FROM buildkite/puppeteer
 
 USER root
 
