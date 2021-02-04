@@ -12,7 +12,7 @@ client.on('ready', () => {
 
 client.on('message', async msg => {
     if (msg.content === '!cesi') {
-        const response = await axios.get(`http://localhost:3000`);
+        const response = await axios.get(`http://${process.env.SCRAPER_HOST || "localhost:3000"}`);
         console.log(response.data[0][0]);
 
 

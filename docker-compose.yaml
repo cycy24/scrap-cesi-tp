@@ -4,6 +4,8 @@ services:
     build: ./bot_discord
     links:
       - "scraper"
+    environment:
+      SCRAPER_HOST : scraper:3000
   scraper:
     build: ./scraper
 
