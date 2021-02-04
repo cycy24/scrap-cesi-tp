@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  bot:
+    build: ./bot_discord
+    links:
+      - "scraper"
+  scraper:
+    build: ./scraper
+
