@@ -7,11 +7,12 @@
   "author": "DevOps Groupe1 RIL19",
   "license": "undefine",
   "private": true,
-  "scripts" :{
-    "start" : "node ./src/main.js"
+  "scripts": {
+    "start": "node src/main.js"
   },
   "dependencies": {
     "axios": "^0.21.0",
+    "cron": "^1.8.2",
     "express": "^4.17.1",
     "puppeteer": "^5.5.0"
   }
