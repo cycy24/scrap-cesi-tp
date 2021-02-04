@@ -8,7 +8,7 @@
   "license": "undefine",
   "private": true,
   "scripts" :{
-    "start" : "node ./src/main.js"
+    "start" : "node src/main.js"
   },
   "dependencies": {
     "axios": "^0.21.0",
