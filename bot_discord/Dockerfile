@@ -6,4 +6,4 @@ COPY . .
 
 RUN yarn install
 
-CMD ['node','src/main.js']
+CMD ["node","src/main.js"]
