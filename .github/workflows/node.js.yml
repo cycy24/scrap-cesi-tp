@@ -6,6 +6,7 @@ name: BOT build and publish
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -29,3 +30,31 @@ jobs:
         echo "BOT_TOKEN=$BOT_TOKEN
               COMMANDE=$COMMANDE" > ./bot_discord/.env
               
+    - shell : bash
+      run : |
+        tar -czf scraper-bot.tar.gzip .
+        
+    - shell : bash
+      env:
+        SSH_KEY: ${{ secrets.SSH_KEY }}
+        AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }} 
+      run : |
+        echo "$SSH_KEY" > key.pem && 
+        ssh -i key.pem ec2-user@$AWS_INSTANCE_ADDR cd /home/scraper-bot && docker-compose kill &&
+        cd .. && rm -rf ./scraper-bot
+                  
+    - shell : bash
+      env:
+        AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }} 
+      run : |
+        scp -i key.pem ./scraper-bot.tar.gzip ec2-user@$AWS_INSTANCE_ADDR:/home/scraper-bot.tar.gzip && 
+        ssh -i key.pem ec2-user@$AWS_INSTANCE_ADDR tar -xzf /home/scraper-bot.tar.gzip
+        
+    - shell : bash
+      env:
+        AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }} 
+      run : |
+         ssh -i key.pem ec2-user@$AWS_INSTANCE_ADDR docker-compose up --build -d --always-recreate /home/scraper-bot
+        
+        
+    
