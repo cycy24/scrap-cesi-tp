@@ -11,7 +11,7 @@ client.on('ready', () => {
 });
 
 client.on('message', async msg => {
-    if (msg.content === '!cesi') {
+    if (msg.content === process.env.COMMANDE) {
         const response = await axios.get(`http://${process.env.SCRAPER_HOST || "localhost:3000"}`);
         console.log(response.data[0][0]);
 
