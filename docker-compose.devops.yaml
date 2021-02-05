@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  bot_devops:
+    build: ./bot_discord
+    links:
+      - "scraper"
+    environment:
+      SCRAPER_HOST : scraper:3000
+  scraper_devops:
+    build: ./scraper
+

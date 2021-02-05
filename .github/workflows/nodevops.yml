@@ -1,0 +1,63 @@
+name: Build and deploy no-devops
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - shell: bash
+        name: Create scraper .env
+        env:
+          LOGIN: ${{ secrets.LOGIN_NODEVOPS }}
+          PASSWORD: ${{ secrets.PWD_NODEVOPS }}
+        run: |
+          echo "LOGIN=$LOGIN
+                PASSWORD=$PASSWORD" > ./scraper/.env
+
+      - shell: bash
+        name: Create bot .env
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          COMMANDE: ${{ secrets.COMMAND_NODEVOPS }}
+        run: |
+          echo "BOT_TOKEN=$BOT_TOKEN
+                COMMANDE=$COMMANDE" > ./bot_discord/.env
+
+      - shell : bash
+        name: Package archive
+        run : |
+          cd .. &&
+          tar -czf ./scraper-bot.tar.gzip ./scrap-cesi-tp
+
+      - shell : bash
+        name: Create ssh key and remove old package
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }}
+        run : |
+          echo "$SSH_KEY" > key.pem &&
+          chmod 400 key.pem &&
+          ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@$AWS_INSTANCE_ADDR 'bash -s' < './scripts/clean-folder.sh \'/home/ec2-user/scrap-cesi-tp/docker-compose.nodevops.yaml\''
+
+      - shell : bash
+        name: Copy and untar package
+        env:
+          AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }}
+        run : |
+          ./scripts/copy-untar-package.sh
+
+
+      - shell : bash
+        name: Deploy with docker-compose
+        env:
+          AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }}
+        run : |
+          ./scripts/deploy.sh "/home/ec2-user/scrap-cesi-tp/docker-compose.nodevops.yaml"
+
+
+
