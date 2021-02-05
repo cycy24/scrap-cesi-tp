@@ -11,7 +11,7 @@
     "start": "node src/main.js"
   },
   "dependencies": {
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "cron": "^1.8.2",
     "express": "^4.17.1",
     "puppeteer": "^5.5.0"
