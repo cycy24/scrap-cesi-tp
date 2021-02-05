@@ -52,7 +52,7 @@ jobs:
         AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }}
       run : |
         scp -i key.pem -o StrictHostKeyChecking=no ../scraper-bot-devops.tar.gzip ec2-user@$AWS_INSTANCE_ADDR:/home/ec2-user/scraper-bot-devops.tar.gzip &&
-        ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@$AWS_INSTANCE_ADDR mkdir -p /home/ec2-user/scraper-bot-devops && tar -C /home/ec2-user/scraper-bot-devops -xzf /home/ec2-user/scraper-bot-devops.tar.gzip
+        ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@$AWS_INSTANCE_ADDR 'mkdir -p /home/ec2-user/scraper-bot-devops && tar -C /home/ec2-user/scraper-bot-devops -xzf /home/ec2-user/scraper-bot-devops.tar.gzip'
 
 
 
