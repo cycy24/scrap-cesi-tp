@@ -42,6 +42,7 @@ jobs:
       run : |
         echo "$SSH_KEY" > key.pem && 
         chmod 400 key.pem &&
+        ls && cat key.pem &&
         ssh -i key.pem ec2-user@$AWS_INSTANCE_ADDR cd /home/scraper-bot && docker-compose kill &&
         cd .. && rm -rf ./scraper-bot
                   
