@@ -13,7 +13,7 @@ module.exports.scrap = async function scrap() {
     await page.type('input[id=login]', process.env.LOGIN)
     await page.click('a[id=submit]');
     await timeout(3000)
-    await page.type('input[id=passwordInput]', process.env.PWD);
+    await page.type('input[id=passwordInput]', process.env.PASSWORD);
     await page.click('span[id=submitButton]');
     await timeout(5000)
 
