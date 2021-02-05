@@ -1,7 +1,8 @@
 const puppeteer = require('puppeteer');
+require('dotenv').config({path: __dirname + '/../.env'});
 
 module.exports.scrap = async function scrap() {
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], executablePath: '/usr/bin/chromium-browser'});
+    const browser = await puppeteer.launch(/*{args: ['--no-sandbox', '--disable-setuid-sandbox'], executablePath: '/usr/bin/chromium-browser'}*/);
     const page = await browser.newPage();
 
     const client = await page.target().createCDPSession();
@@ -9,10 +10,10 @@ module.exports.scrap = async function scrap() {
     await client.send('Network.clearBrowserCache');
 
     await page.goto('https://ent.cesi.fr/');
-    await page.type('input[id=login]', 'theo.samson@viacesi.fr')
+    await page.type('input[id=login]', process.env.LOGIN)
     await page.click('a[id=submit]');
     await timeout(3000)
-    await page.type('input[id=passwordInput]', 'Favud299');
+    await page.type('input[id=passwordInput]', process.env.PWD);
     await page.click('span[id=submitButton]');
     await timeout(5000)
 
