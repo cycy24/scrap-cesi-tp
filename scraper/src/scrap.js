@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 require('dotenv').config({path: __dirname + '/../.env'});
 
 module.exports.scrap = async function scrap() {
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], executablePath: '/usr/bin/chromium-browser'});
+    const browser = await puppeteer.launch(/*{args: ['--no-sandbox', '--disable-setuid-sandbox'], executablePath: '/usr/bin/chromium-browser'}*/);
     const page = await browser.newPage();
 
     const client = await page.target().createCDPSession();
