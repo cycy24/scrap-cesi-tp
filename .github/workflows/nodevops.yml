@@ -57,8 +57,9 @@ jobs:
         name: Deploy with docker-compose
         env:
           AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }}
+          DOCKER_COMPOSE_YML_PATH: /home/ec2-user/scrap-cesi-tp/docker-compose.nodevops.yaml
         run : |
-          ./scripts/deploy.sh "/home/ec2-user/scrap-cesi-tp/docker-compose.nodevops.yaml"
+          ./scripts/deploy.sh
 
 
 
