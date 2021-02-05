@@ -57,7 +57,7 @@ jobs:
       env:
         AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }} 
       run : |
-         ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@$AWS_INSTANCE_ADDR docker-compose up --build -d --always-recreate /home/ec2-user/scraper-bot/docker-compose.yaml
+         ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@$AWS_INSTANCE_ADDR docker-compose -f /home/ec2-user/scraper-bot/docker-compose.yaml up --build -d --always-recreate
         
         
     
