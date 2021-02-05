@@ -3,7 +3,7 @@ services:
   bot_devops:
     build: ./bot_discord
     links:
-      - "scraper"
+      - "scraper_devops"
     environment:
       SCRAPER_HOST : scraper:3000
   scraper_devops:
