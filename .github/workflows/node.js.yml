@@ -18,10 +18,10 @@ jobs:
     - shell: bash
       env:
         LOGIN: ${{ secrets.LOGIN_DEVOPS }}
-        PWD: ${{ secrets.PWD_DEVOPS }}
+        PASSWORD: ${{ secrets.PWD_DEVOPS }}
       run: |
         echo "LOGIN=$LOGIN
-              PWD=$PWD" > ./scraper/.env
+              PASSWORD=$PASSWORD" > ./scraper/.env
     - shell: bash
       env:
         BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
