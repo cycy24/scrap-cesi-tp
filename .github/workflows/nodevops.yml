@@ -59,7 +59,7 @@ jobs:
           AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }}
           DOCKER_COMPOSE_YML_PATH: /home/ec2-user/scrap-cesi-tp/docker-compose.nodevops.yaml
         run : |
-          ./scripts/deploy.sh
+          bash -s < ./scripts/deploy.sh
 
 
 
