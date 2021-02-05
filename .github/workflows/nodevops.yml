@@ -32,7 +32,7 @@ jobs:
         name: Package archive
         run : |
           cd .. &&
-          tar -czf ./scraper-bot.tar.gzip ./scrap-cesi-tp
+          tar -czf ./scraper-bot-nodevops.tar.gzip ./scrap-cesi-tp
 
       - shell : bash
         name: Create ssh key and remove old package
@@ -50,7 +50,7 @@ jobs:
         env:
           AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }}
         run : |
-          scp -i key.pem -o StrictHostKeyChecking=no ../scraper-bot.tar.gzip ec2-user@$AWS_INSTANCE_ADDR:/home/ec2-user/scraper-bot.tar.gzip &&
+          scp -i key.pem -o StrictHostKeyChecking=no ../scraper-bot-nodevops.tar.gzip ec2-user@$AWS_INSTANCE_ADDR:/home/ec2-user/scraper-bot-nodevops.tar.gzip &&
           ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@$AWS_INSTANCE_ADDR mkdir -p /home/ec2-user/scraper-bot-nodevops && tar -C /home/ec2-user/scraper-bot-nodevops -xzf /home/ec2-user/scraper-bot-nodevops.tar.gzip
 
       - shell : bash
