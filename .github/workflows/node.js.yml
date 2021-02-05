@@ -32,7 +32,8 @@ jobs:
               
     - shell : bash
       run : |
-        tar -czf scraper-bot.tar.gzip .
+        cd .. && 
+        tar -czf ./scraper-bot.tar.gzip ./scrap-cesi-tp
         
     - shell : bash
       env:
