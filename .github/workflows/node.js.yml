@@ -1,0 +1,60 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: BOT build and publish
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - shell: bash
+      env:
+        LOGIN: ${{ secrets.LOGIN_DEVOPS }}
+        PWD: ${{ secrets.PWD_DEVOPS }}
+      run: |
+        echo "LOGIN=$LOGIN
+              PWD=$PWD" > ./scraper/.env
+    - shell: bash
+      env:
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        COMMANDE: ${{ secrets.COMMAND_DEVOPS }}
+      run: |
+        echo "BOT_TOKEN=$BOT_TOKEN
+              COMMANDE=$COMMANDE" > ./bot_discord/.env
+              
+    - shell : bash
+      run : |
+        tar -czf scraper-bot.tar.gzip .
+        
+    - shell : bash
+      env:
+        SSH_KEY: ${{ secrets.SSH_KEY }}
+        AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }} 
+      run : |
+        echo "$SSH_KEY" > key.pem && 
+        ssh -i key.pem ec2-user@$AWS_INSTANCE_ADDR cd /home/scraper-bot && docker-compose kill &&
+        cd .. && rm -rf ./scraper-bot
+                  
+    - shell : bash
+      env:
+        AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }} 
+      run : |
+        scp -i key.pem ./scraper-bot.tar.gzip ec2-user@$AWS_INSTANCE_ADDR:/home/scraper-bot.tar.gzip && 
+        ssh -i key.pem ec2-user@$AWS_INSTANCE_ADDR tar -xzf /home/scraper-bot.tar.gzip
+        
+    - shell : bash
+      env:
+        AWS_INSTANCE_ADDR: ${{ secrets.AWS_INSTANCE_ADDR }} 
+      run : |
+         ssh -i key.pem ec2-user@$AWS_INSTANCE_ADDR docker-compose up --build -d --always-recreate /home/scraper-bot
+        
+        
+    
